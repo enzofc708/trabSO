@@ -6,10 +6,18 @@ typedef struct{
     Process queue[QUEUE_SIZE];
 } ProcessQueue;
 
-Process queuePop(Processqueue* processQueue){
-    Process popped = processQueue->queue[processQueue->count - 1];
-    processQueue->count--;
-    return popped;
+Process queuePop(ProcessQueue* processQueue){
+    if(processQueue->count > 0){
+        Process popped = processQueue->queue[processQueue->count - 1];
+        processQueue->count--;
+        return popped;
+    }
+    else{
+        
+    }
 }
 
-Process pushQueue(ProcessQueu)
+void pushQueue(ProcessQueue* processQueue, Process p){
+    processQueue->queue[processQueue->count] = p;
+    processQueue->count++;
+}
