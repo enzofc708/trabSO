@@ -1,9 +1,9 @@
-#include "Models/Process.h"
 #include "Constants/IO.h"
 #include "Constants/States.h"
-#include "Constants/Settings.h"
+#include "Models/Process.h"
 #include "Models/ProcessQueue.h"
 
+#define MAX_PROCESSES 20
 
 //Process Scheduler 
 int main(int argc, char const *argv[])
