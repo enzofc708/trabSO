@@ -1,23 +1,29 @@
 #include "Models/Process.h"
 #include "Constants/IO.h"
 #include "Constants/States.h"
+#include "Constants/Settings.h"
+#include "Models/ProcessQueue.h"
 
 
 //Process Scheduler 
 int main(int argc, char const *argv[])
 {
 
+    //Process List
+    Process processList[MAX_PROCESSES];
+    
+
     //Priority Queues
-    Process priorityQueue1[10];
-    Process priorityQueue2[10];
-    Process priorityQueue3[10];
-    Process priorityQueue4[10];
-    Process priorityQueue5[10];
+    ProcessQueue priorityQueue1;
+    ProcessQueue priorityQueue2;
+    ProcessQueue priorityQueue3;
+    ProcessQueue priorityQueue4;
+    ProcessQueue priorityQueue5;
 
     //IO Queues
-    Process printerQueue[5];
-    Process diskQueue[5];
-    Process magTapeQueue[5];
+    ProcessQueue printerQueue;
+    ProcessQueue diskQueue;
+    ProcessQueue magTapeQueue;
 
     //Scheduler Properties
     int currentTime = 0;
