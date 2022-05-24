@@ -1,10 +1,21 @@
 #include "Process.h"
-#include "../Constants/Settings.h"
+
+#define QUEUE_SIZE 10
 
 typedef struct{
-    int count = 0;
+    int count;
     Process queue[QUEUE_SIZE];
 } ProcessQueue;
+
+ProcessQueue createQueue(){
+    ProcessQueue queue;
+    queue.count = 0;
+    return queue;
+}
+
+bool isEmpty(ProcessQueue queue){
+    
+}
 
 Process popQueue(ProcessQueue* processQueue){
     if(processQueue->count > 0){
