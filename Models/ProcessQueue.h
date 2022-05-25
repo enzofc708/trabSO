@@ -1,6 +1,4 @@
-#include "Process.h"
-
-#define QUEUE_SIZE 10
+#include "../Constants/Macros.h"
 
 typedef struct{
     int count;
@@ -13,27 +11,20 @@ ProcessQueue createQueue(){
     return queue;
 }
 
-bool isEmpty(ProcessQueue queue){
-    
+int isEmptyQueue(ProcessQueue* queue){
+    return queue->count;                                                 
+}
+
+int isFullQueue(ProcessQueue* queue){
+    return (queue->count == QUEUE_SIZE);                                
 }
 
 Process popQueue(ProcessQueue* processQueue){
-    if(processQueue->count > 0){
-        Process popped = processQueue->queue[processQueue->count - 1];
-        processQueue->count--;
-        return popped;
-    }
-    else{
-        return NULL;
-    }
+    Process popped = processQueue->queue[processQueue->count - 1];
+    processQueue->count--;
+    return popped;
 }
 
 int pushQueue(ProcessQueue* processQueue, Process p){
-    if(processQueue->count < QUEUE_SIZE){
-        processQueue->queue[processQueue->count++] = p;
-        return processQueue->count;
-    }
-    else{
-        return -1;
-    }
+    processQueue->queue[processQueue->count++] = p;
 }
