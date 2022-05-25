@@ -39,7 +39,3 @@ int isEmpty(ProcessScheduler* scheduler){
 void schedule(ProcessScheduler* p){
 
 }
-
-void loadExamples(){
-    
-}

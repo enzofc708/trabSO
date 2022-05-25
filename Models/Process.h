@@ -8,12 +8,12 @@ typedef struct
     int ExpectedTime;           //Expected time until tasks are completed
     int ExecutedTime;           //Amount of time already executed
     enum IOs IOType;            //IO operation type
-    int ExecutedIOTime;         //Amount of time already executed on I/O operations (??)
+    int IOStartTime;            //Time since the process entered into IO queue
     enum Priorities Priority;   //Process priority
 } Process;
 
 
-Process createProcess(int _PID, int _StartTime, int _ExpectedTime, enum IOs _IOType){
+Process createProcess(int _PID, int _StartTime, int _ExpectedTime, int _IOStartTime, enum IOs _IOType){
     Process p;
     
     p.PID = _PID;
@@ -22,7 +22,7 @@ Process createProcess(int _PID, int _StartTime, int _ExpectedTime, enum IOs _IOT
     p.ExpectedTime = _ExpectedTime;
     p.ExecutedTime = 0;
     p.IOType = _IOType;
-    p.ExecutedIOTime = 0;
+    p.IOStartTime = _IOStartTime;
     p.Priority = HighPriority;
 
     return p;
