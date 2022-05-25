@@ -1,5 +1,3 @@
-#include "../Constants/Macros.h"
-
 typedef struct{
     Process processList[MAX_PROCESSES];
     int count;
@@ -25,4 +23,14 @@ void removeFromIndex(ProcessList* list, int index){
          list->processList[i] = list->processList[i+1];
     }
     list->count--;
+}
+
+int hasNotDoneProcess(ProcessList* list){
+    for (int i = 0; i < list->count; i++)
+    {
+        if(list->processList[i].State != ExitState){
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
