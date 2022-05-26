@@ -80,7 +80,17 @@ void schedule(ProcessScheduler* p){
     switch (chosenProcess->State)
     {
     case BlockedState:
-        
+        switch(chosenProcess->IOType){
+            case DiskIO:
+                pushQueue(&p->diskQueue, chosenProcess);
+                break;
+            case PrinterIO:
+                pushQueue(&p->printerQueue, chosenProcess):
+                break;
+            default:
+                pushQueue(p->magTapeQueue, chosenProcess);
+                break;
+        }
         break;
     
     default:
