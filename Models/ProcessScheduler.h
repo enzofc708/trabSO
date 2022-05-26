@@ -1,7 +1,7 @@
 typedef struct
 {
     //Process List
-    ProcessList processList;
+    ProcessList* processList;
 
     // Priority Queues
     ProcessQueue lowPriorityQueue;
@@ -33,19 +33,19 @@ ProcessScheduler createScheduler(){
 }
 
 int isEmpty(ProcessScheduler* scheduler){
-    return scheduler->processList.count;
+    return !scheduler->processList->count;
 }
 
-ProcessList getNewProcesses(ProcessScheduler* p){
-    ProcessList newProcesses = createList();
-    for (int i = 0; i < p->processList.count; i++)
+ProcessList* getNewProcesses(ProcessScheduler* p){
+    ProcessList* newProcesses = createList();
+    for (int i = 0; i < p->processList->count; i++)
     {
-        if(p->processList.processList[i]->State == NewState &&
-           p->processList.processList[i]->StartTime <= p->currentIime &&
-           p->processList.count < MAX_PROCESSES){
-               p->processList.processList[i]->State = ReadyState;
-               p->processList.processList[i]->Priority = HighPriority;
-            add(&newProcesses, p->processList.processList[i]);
+        if(p->processList->processList[i]->State == NewState &&
+           p->processList->processList[i]->StartTime <= p->currentIime &&
+           p->processList->count < MAX_PROCESSES){
+               p->processList->processList[i]->State = ReadyState;
+               p->processList->processList[i]->Priority = HighPriority;
+            add(newProcesses, p->processList->processList[i]);
         }
     }
     return newProcesses;
@@ -54,9 +54,10 @@ ProcessList getNewProcesses(ProcessScheduler* p){
 void schedule(ProcessScheduler* p){
 
      //Add new processes to high priority queue
-    ProcessList newProcesses = getNewProcesses(p);
-    if(newProcesses.count > 0){
-        append(&p->highPriorityQueue, &p->processList);
+    ProcessList* newProcesses = getNewProcesses(p);
+    
+    if(newProcesses->count > 0){
+        append(&p->highPriorityQueue, p->processList);
     }
 
     //Chooses process to gain CPU access
@@ -71,30 +72,44 @@ void schedule(ProcessScheduler* p){
         return;
     }
 
+    printf("Process entered CPU: PID = {%d}", chosenProcess->PID);
+
     //Forward time
-    int execTime = getExecTime(chosenProcess, p->currentIime);
+    int execTime = getExecTime(chosenProcess);
     chosenProcess->RemainingTime -= execTime;
     p->currentIime += execTime;
 
     //Process treatment
-    switch (chosenProcess->State)
+    if(chosenProcess->IOStartTime == (chosenProcess->ExpectedTime - chosenProcess->RemainingTime))
     {
-    case BlockedState:
+        chosenProcess->State = BlockedState;
         switch(chosenProcess->IOType){
             case DiskIO:
                 pushQueue(&p->diskQueue, chosenProcess);
                 break;
             case PrinterIO:
-                pushQueue(&p->printerQueue, chosenProcess):
+                pushQueue(&p->printerQueue, chosenProcess);
                 break;
             default:
-                pushQueue(p->magTapeQueue, chosenProcess);
+                pushQueue(&p->magTapeQueue, chosenProcess);
                 break;
         }
-        break;
-    
-    default:
-        break;
+        printf("Process entered IO: PID = {%d}", chosenProcess->PID);
     }
+    else if(chosenProcess->RemainingTime == 0){
+        chosenProcess->State = ExitState;
+        printf("Process finished: PID = {%d}, Time = {%d}", chosenProcess->PID, p->currentIime);
+    }
+    else{
+        chosenProcess->State = ReadyState;
+        printf("Process preempted: PID = {%d}, Remaining Time = {%d}", chosenProcess->PID, chosenProcess->RemainingTime);
+    }
+
+    //Treat IOs
+    spendIOTime(&p->printerQueue, PrinterIO, execTime);
+    spendIOTime(&p->magTapeQueue, MagneticTapeIO, execTime);
+    spendIOTime(&p->diskQueue, DiskIO, execTime);
+
+    
 
 }

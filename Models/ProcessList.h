@@ -3,9 +3,9 @@ typedef struct{
     int count;
 } ProcessList;
 
-ProcessList createList(){
-    ProcessList list;
-    list.count = 0;
+ProcessList* createList(){
+    ProcessList* list = (ProcessList *) malloc(sizeof(ProcessList));
+    list->count = 0;
     return list;
 }
 

@@ -1,3 +1,7 @@
+#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "Constants/IO.h"
 #include "Constants/States.h"
 #include "Constants/Macros.h"
@@ -6,11 +10,9 @@
 #include "Models/ProcessQueue.h"
 #include "Models/ProcessList.h"
 #include "Utils/SchedulerUtils.h"
+#include "Utils/IOUtils.h"
 #include "Models/ProcessScheduler.h"
 #include "Examples/Examples.h"
-
-#include <time.h>
-#include <stdlib.h>
 
 
 //Process Scheduler 
@@ -22,9 +24,11 @@ int main(int argc, char const *argv[])
     //Scheduler
     ProcessScheduler scheduler = createScheduler();
 
+    createExample1(&scheduler);
+
     while(!isEmpty(&scheduler))
     {
-        
+        schedule(&scheduler);
     }    
 
     return 0;
