@@ -6,7 +6,7 @@ typedef struct
     enum States State;          //Process current state
     int StartTime;              //Time since the process entered into ready queue
     int ExpectedTime;           //Expected time until tasks are completed
-    int ExecutedTime;           //Amount of time already executed
+    int RemainingTime;          //Amount of time until completion
     enum IOs IOType;            //IO operation type
     int IOStartTime;            //Time since the process entered into IO queue
     enum Priorities Priority;   //Process priority
@@ -20,7 +20,7 @@ Process createProcess(int _PID, int _StartTime, int _ExpectedTime, int _IOStartT
     p.State = NewState;
     p.StartTime = _StartTime;
     p.ExpectedTime = _ExpectedTime;
-    p.ExecutedTime = 0;
+    p.RemainingTime = _ExpectedTime;
     p.IOType = _IOType;
     p.IOStartTime = _IOStartTime;
     p.Priority = HighPriority;

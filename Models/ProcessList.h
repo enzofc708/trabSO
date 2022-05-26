@@ -1,5 +1,5 @@
 typedef struct{
-    Process processList[MAX_PROCESSES];
+    Process* processList[MAX_PROCESSES];
     int count;
 } ProcessList;
 
@@ -13,7 +13,7 @@ int isEmptyList(ProcessList* list){
     return list->count;   
 }
 
-void add(ProcessList* list, Process p){
+void add(ProcessList* list, Process* p){
     list->processList[list->count++] = p;
 }
 
@@ -28,9 +28,16 @@ void removeFromIndex(ProcessList* list, int index){
 int hasNotDoneProcess(ProcessList* list){
     for (int i = 0; i < list->count; i++)
     {
-        if(list->processList[i].State != ExitState){
+        if(list->processList[i]->State != ExitState){
             return TRUE;
         }
     }
     return FALSE;
+}
+
+void append(ProcessQueue* p1, ProcessList* p2){
+    for (int i = 0; i < p2->count; i++)
+    {
+        pushQueue(p1, p2->processList[i]);
+    }    
 }

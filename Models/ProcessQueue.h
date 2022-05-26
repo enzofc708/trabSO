@@ -2,7 +2,7 @@
 
 typedef struct{
     int count;
-    Process queue[QUEUE_SIZE];
+    Process* queue[QUEUE_SIZE];
 } ProcessQueue;
 
 ProcessQueue createQueue(){
@@ -19,12 +19,12 @@ int isFullQueue(ProcessQueue* queue){
     return (queue->count == QUEUE_SIZE);                                
 }
 
-Process popQueue(ProcessQueue* processQueue){
-    Process popped = processQueue->queue[processQueue->count - 1];
+Process* popQueue(ProcessQueue* processQueue){
+    Process* popped = processQueue->queue[processQueue->count - 1];
     processQueue->count--;
     return popped;
 }
 
-int pushQueue(ProcessQueue* processQueue, Process p){
+void pushQueue(ProcessQueue* processQueue, Process* p){
     processQueue->queue[processQueue->count++] = p;
 }
