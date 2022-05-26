@@ -54,8 +54,10 @@ ProcessList getNewProcesses(ProcessScheduler* p){
 void schedule(ProcessScheduler* p){
 
      //Add new processes to high priority queue
-    ProcessList newProcesses = getNewProcesses(p);     
-    append(&p->highPriorityQueue, &p->processList);
+    ProcessList newProcesses = getNewProcesses(p);
+    if(newProcesses.count > 0){
+        append(&p->highPriorityQueue, &p->processList);
+    }
 
     //Chooses process to gain CPU access
     Process* chosenProcess;
@@ -69,8 +71,20 @@ void schedule(ProcessScheduler* p){
         return;
     }
 
-    int execTime = getExecTime(&chosenProcess);
-
+    //Forward time
+    int execTime = getExecTime(chosenProcess, p->currentIime);
     chosenProcess->RemainingTime -= execTime;
     p->currentIime += execTime;
+
+    //Process treatment
+    switch (chosenProcess->State)
+    {
+    case BlockedState:
+        
+        break;
+    
+    default:
+        break;
+    }
+
 }

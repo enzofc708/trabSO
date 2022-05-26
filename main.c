@@ -5,9 +5,9 @@
 #include "Models/Process.h"
 #include "Models/ProcessQueue.h"
 #include "Models/ProcessList.h"
+#include "Utils/SchedulerUtils.h"
 #include "Models/ProcessScheduler.h"
 #include "Examples/Examples.h"
-#include "Utils/SchedulerUtils.h"
 
 #include <time.h>
 #include <stdlib.h>
