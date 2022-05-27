@@ -10,19 +10,21 @@ ProcessList* createList(){
 }
 
 int isEmptyList(ProcessList* list){
-    return list->count;   
+    return !list->count;   
 }
 
 void add(ProcessList* list, Process* p){
     list->processList[list->count++] = p;
 }
 
-void removeFromIndex(ProcessList* list, int index){
-    for (int i = index; i < list->count - 1; i++)
+Process* popHead(ProcessList* list){
+    Process* head = list->processList[0];
+    for (int i = 0; i < list->count - 1; i++)
     {
          list->processList[i] = list->processList[i+1];
     }
     list->count--;
+    return head;
 }
 
 int hasNotDoneProcess(ProcessList* list){
@@ -35,9 +37,9 @@ int hasNotDoneProcess(ProcessList* list){
     return FALSE;
 }
 
-void append(ProcessQueue* p1, ProcessList* p2){
+void append(ProcessList* p1, ProcessList* p2){
     for (int i = 0; i < p2->count; i++)
     {
-        pushQueue(p1, p2->processList[i]);
+        add(p1, p2->processList[i]);
     }    
 }

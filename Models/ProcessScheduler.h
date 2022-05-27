@@ -4,13 +4,13 @@ typedef struct
     ProcessList* processList;
 
     // Priority Queues
-    ProcessQueue lowPriorityQueue;
-    ProcessQueue highPriorityQueue;
+    ProcessList* lowPriorityQueue;
+    ProcessList* highPriorityQueue;
 
     //IO Queues
-    ProcessQueue printerQueue;
-    ProcessQueue diskQueue;
-    ProcessQueue magTapeQueue;
+    ProcessList* printerQueue;
+    ProcessList* diskQueue;
+    ProcessList* magTapeQueue;
 
     //Scheduler properties
     int currentIime;
@@ -22,11 +22,11 @@ ProcessScheduler createScheduler(){
 
     p.processList = createList();
 
-    p.lowPriorityQueue = createQueue();
-    p.highPriorityQueue = createQueue();
-    p.printerQueue = createQueue();
-    p.diskQueue = createQueue();
-    p.magTapeQueue = createQueue();
+    p.lowPriorityQueue = createList();
+    p.highPriorityQueue = createList();
+    p.printerQueue = createList();
+    p.diskQueue = createList();
+    p.magTapeQueue = createList();
 
     p.currentIime = 0;
     return p;
@@ -57,19 +57,19 @@ void schedule(ProcessScheduler* p){
     ProcessList* newProcesses = getNewProcesses(p);
     
     if(newProcesses->count > 0){
-        append(&p->highPriorityQueue, p->processList);
+        append(p->highPriorityQueue, newProcesses);
     }
 
     //Chooses process to gain CPU access
     Process* chosenProcess;
-    if(p->highPriorityQueue.count > 0){
-        chosenProcess = popQueue(&p->highPriorityQueue);
+    if(p->highPriorityQueue->count > 0){
+        chosenProcess = popHead(p->highPriorityQueue);
     }
-    else if(p->lowPriorityQueue.count > 0){
-        chosenProcess = popQueue(&p->lowPriorityQueue);
+    else if(p->lowPriorityQueue->count > 0){
+        chosenProcess = popHead(p->lowPriorityQueue);
     }
     else{
-        return;
+        return; //ToDo: conferir se alguem voltou de IO ou se ha processo novo
     }
 
     printf("Process entered CPU: PID = {%d}", chosenProcess->PID);
@@ -79,19 +79,24 @@ void schedule(ProcessScheduler* p){
     chosenProcess->RemainingTime -= execTime;
     p->currentIime += execTime;
 
+    //Treat IOs
+    spendIOTime(p->printerQueue, PrinterIO, execTime);
+    spendIOTime(p->magTapeQueue, MagneticTapeIO, execTime);
+    spendIOTime(p->diskQueue, DiskIO, execTime);
+
     //Process treatment
     if(chosenProcess->IOStartTime == (chosenProcess->ExpectedTime - chosenProcess->RemainingTime))
     {
         chosenProcess->State = BlockedState;
         switch(chosenProcess->IOType){
             case DiskIO:
-                pushQueue(&p->diskQueue, chosenProcess);
+                add(p->diskQueue, chosenProcess);
                 break;
             case PrinterIO:
-                pushQueue(&p->printerQueue, chosenProcess);
+                add(p->printerQueue, chosenProcess);
                 break;
             default:
-                pushQueue(&p->magTapeQueue, chosenProcess);
+                add(p->magTapeQueue, chosenProcess);
                 break;
         }
         printf("Process entered IO: PID = {%d}", chosenProcess->PID);
@@ -102,13 +107,12 @@ void schedule(ProcessScheduler* p){
     }
     else{
         chosenProcess->State = ReadyState;
+        chosenProcess->Priority = LowPriority;
+        add(p->lowPriorityQueue, chosenProcess);
         printf("Process preempted: PID = {%d}, Remaining Time = {%d}", chosenProcess->PID, chosenProcess->RemainingTime);
     }
 
-    //Treat IOs
-    spendIOTime(&p->printerQueue, PrinterIO, execTime);
-    spendIOTime(&p->magTapeQueue, MagneticTapeIO, execTime);
-    spendIOTime(&p->diskQueue, DiskIO, execTime);
+
 
     
 

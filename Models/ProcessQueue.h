@@ -5,14 +5,14 @@ typedef struct{
     Process* queue[QUEUE_SIZE];
 } ProcessQueue;
 
-ProcessQueue createQueue(){
-    ProcessQueue queue;
-    queue.count = 0;
+ProcessQueue* createQueue(){
+    ProcessQueue* queue = (ProcessQueue *) malloc(sizeof(ProcessQueue));
+    queue->count = 0;
     return queue;
 }
 
 int isEmptyQueue(ProcessQueue* queue){
-    return queue->count;                                                 
+    return !queue->count;                                                 
 }
 
 int isFullQueue(ProcessQueue* queue){

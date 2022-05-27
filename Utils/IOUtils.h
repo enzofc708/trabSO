@@ -1,8 +1,8 @@
-void spendIOTime(ProcessQueue* queue, enum IOs IOType, int time){
+void spendIOTime(ProcessList* list, enum IOs IOType, int time){
     int ioTime;
     Process* chosenProcess;
 
-    if(!isEmptyQueue(queue)){
+    if(!isEmptyList(list)){
         switch (IOType){
             case DiskIO:
                 ioTime = 5;
@@ -13,7 +13,7 @@ void spendIOTime(ProcessQueue* queue, enum IOs IOType, int time){
                 ioTime = 15;
                 break;
         }
-        chosenProcess = popQueue(queue);
+        chosenProcess = popHead(list);
 
         if(chosenProcess->IOElapsedTime + time > ioTime){
             chosenProcess->IOElapsedTime = ioTime;
@@ -22,7 +22,7 @@ void spendIOTime(ProcessQueue* queue, enum IOs IOType, int time){
         }
         else{
             chosenProcess->IOElapsedTime += time;
-            pushQueue(queue, chosenProcess);
+            add(list, chosenProcess);
         }
     }
 }
