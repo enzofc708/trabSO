@@ -49,7 +49,84 @@ ProcessList* getNewProcesses(ProcessScheduler* p){
         }
     }
     return newProcesses;
-}  
+}
+
+void spendIOTime(ProcessScheduler* scheduler, enum IOs IOType, int time){
+    int ioTime;
+    Process* chosenProcess;
+    ProcessList* IOqueue;
+    ProcessList* priorityQueue;
+
+    switch (IOType){
+        case DiskIO:
+            ioTime = 5;
+            IOqueue = scheduler->diskQueue;
+            priorityQueue = scheduler->lowPriorityQueue;
+            break;
+        case PrinterIO:
+            ioTime = 10;
+            IOqueue = scheduler->printerQueue;
+            priorityQueue = scheduler->highPriorityQueue;
+            break;
+        default:
+            ioTime = 15;
+            IOqueue = scheduler->magTapeQueue;
+            priorityQueue = scheduler->highPriorityQueue;
+            break;
+    }
+
+    if(!isEmptyList(IOqueue)){
+
+        chosenProcess = popHead(IOqueue);
+
+        if(chosenProcess->IOElapsedTime + time >= ioTime){
+            chosenProcess->IOElapsedTime = ioTime;
+            chosenProcess->State = ReadyState;
+            add(priorityQueue, chosenProcess);
+            printf("Process left IO: PID = {%d}", chosenProcess->PID);
+        }
+        else{
+            chosenProcess->IOElapsedTime += time;
+            add(IOqueue, chosenProcess);
+        }
+    }
+}
+
+// int checkSmallestTimeNewProcess(ProcessScheduler* p){
+//     int forwardTime = -1;
+
+//     for (int i = 0; i < p->processList->count; i++)
+//     {
+//         if(p->processList->processList[i]->State == NewState)
+//         {
+//             if (forwardTime == -1)
+//             {
+//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
+//             }
+//             else if(p->processList->processList[i]->StartTime - p->currentIime > forwardTime){
+//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
+//             }
+//         }
+//     }
+// }
+
+// int checkSmallestTimeIO(ProcessScheduler* p){
+//     int forwardTime = -1;
+
+//     for (int i = 0; i < p->processList->count; i++)
+//     {
+//         if(p->processList->processList[i]->State == BlockedState)
+//         {
+//             if (forwardTime == -1)
+//             {
+//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
+//             }
+//             else if(p->processList->processList[i]->StartTime - p->currentIime > forwardTime){
+//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
+//             }
+//         }
+//     }
+// }
 
 void schedule(ProcessScheduler* p){
 
@@ -69,7 +146,12 @@ void schedule(ProcessScheduler* p){
         chosenProcess = popHead(p->lowPriorityQueue);
     }
     else{
-        return; //ToDo: conferir se alguem voltou de IO ou se ha processo novo
+        p->currentIime++;
+
+        spendIOTime(p, PrinterIO, 1);
+        spendIOTime(p, MagneticTapeIO, 1);
+        spendIOTime(p, DiskIO, 1);
+        return;
     }
 
     printf("Process entered CPU: PID = {%d}", chosenProcess->PID);
@@ -80,9 +162,9 @@ void schedule(ProcessScheduler* p){
     p->currentIime += execTime;
 
     //Treat IOs
-    spendIOTime(p->printerQueue, PrinterIO, execTime);
-    spendIOTime(p->magTapeQueue, MagneticTapeIO, execTime);
-    spendIOTime(p->diskQueue, DiskIO, execTime);
+    spendIOTime(p, PrinterIO, execTime);
+    spendIOTime(p, MagneticTapeIO, execTime);
+    spendIOTime(p, DiskIO, execTime);
 
     //Process treatment
     if(chosenProcess->IOStartTime == (chosenProcess->ExpectedTime - chosenProcess->RemainingTime))
