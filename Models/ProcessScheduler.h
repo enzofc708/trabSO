@@ -36,6 +36,17 @@ int isEmpty(ProcessScheduler* scheduler){
     return !scheduler->processList->count;
 }
 
+int hasAvailableProcess(ProcessScheduler* scheduler){
+    for (int i = 0; i < scheduler->processList->count; i++)
+    {
+        if(scheduler->processList->processList[i]->State != ExitState){
+            return TRUE;
+        }
+    }
+    return FALSE;
+    
+}
+
 ProcessList* getNewProcesses(ProcessScheduler* p){
     ProcessList* newProcesses = createList();
     for (int i = 0; i < p->processList->count; i++)
@@ -91,42 +102,6 @@ void spendIOTime(ProcessScheduler* scheduler, enum IOs IOType, int time){
         }
     }
 }
-
-// int checkSmallestTimeNewProcess(ProcessScheduler* p){
-//     int forwardTime = -1;
-
-//     for (int i = 0; i < p->processList->count; i++)
-//     {
-//         if(p->processList->processList[i]->State == NewState)
-//         {
-//             if (forwardTime == -1)
-//             {
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//             else if(p->processList->processList[i]->StartTime - p->currentIime > forwardTime){
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//         }
-//     }
-// }
-
-// int checkSmallestTimeIO(ProcessScheduler* p){
-//     int forwardTime = -1;
-
-//     for (int i = 0; i < p->processList->count; i++)
-//     {
-//         if(p->processList->processList[i]->State == BlockedState)
-//         {
-//             if (forwardTime == -1)
-//             {
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//             else if(p->processList->processList[i]->StartTime - p->currentIime > forwardTime){
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//         }
-//     }
-// }
 
 void schedule(ProcessScheduler* p){
 
