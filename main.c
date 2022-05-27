@@ -25,7 +25,7 @@ int main(int argc, char const *argv[])
 
     createExample1(&scheduler);
 
-    while(!isEmpty(&scheduler))
+    while(hasAvailableProcess(&scheduler))
     {
         schedule(&scheduler);
     }    
