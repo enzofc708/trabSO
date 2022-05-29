@@ -10,7 +10,6 @@ typedef struct
     enum IOs IOType;            //IO operation type
     int IOStartTime;            //Time when process entered the IO queue
     int IOElapsedTime;          //Time process spent in IO queue
-    enum Priorities Priority;   //Process priority
 } Process;
 
 
@@ -21,13 +20,12 @@ Process* createProcess(int _PID){
     
     p->PID = _PID;
     p->State = NewState;
-    p->StartTime = rand() % 10 + 1;
-    p->ExpectedTime = rand() % 10 + 1;
-    p->RemainingTime = rand() % 10 + 1;
+    p->StartTime = rand() % 10;
+    p->ExpectedTime = rand() % 10 + 3;
+    p->RemainingTime = p->ExpectedTime;
     p->IOType = rand() % 3;
-    p->IOStartTime = rand() % 10 + 1;
+    p->IOStartTime = rand() % (p->ExpectedTime - 1) + 1;
     p->IOElapsedTime = 0;
-    p->Priority = HighPriority;
 
     printf("_____________________\n");
     printf("Process %d created\n", p->PID);
