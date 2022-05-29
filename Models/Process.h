@@ -14,18 +14,28 @@ typedef struct
 } Process;
 
 
-Process* createProcess(int _PID, int _StartTime, int _ExpectedTime, int _IOStartTime, enum IOs _IOType){
+Process* createProcess(int _PID){
     Process* p = (Process *) malloc(sizeof(Process));
+
+    const char *ioTypes[] = {"PrinterIO", "MagneticTapeIO", "DiskIO"};
     
     p->PID = _PID;
     p->State = NewState;
-    p->StartTime = _StartTime;
-    p->ExpectedTime = _ExpectedTime;
-    p->RemainingTime = _ExpectedTime;
-    p->IOType = _IOType;
-    p->IOStartTime = _IOStartTime;
+    p->StartTime = rand() % 10 + 1;
+    p->ExpectedTime = rand() % 10 + 1;
+    p->RemainingTime = rand() % 10 + 1;
+    p->IOType = rand() % 3;
+    p->IOStartTime = rand() % 10 + 1;
     p->IOElapsedTime = 0;
     p->Priority = HighPriority;
+
+    printf("_____________________\n");
+    printf("Process %d created\n", p->PID);
+    printf("Start time: %d\n", p->StartTime);
+    printf("IO type: %s\n",ioTypes[p->IOType]);
+    printf("IO start time: %d\n", p->IOStartTime);
+    printf("_____________________\n");
+    printf("\n");
 
     return p;
 }

@@ -23,7 +23,8 @@ int main(int argc, char const *argv[])
     //Scheduler
     ProcessScheduler scheduler = createScheduler();
 
-    createExample1(&scheduler);
+    //segundo parâmetro é a quantidade de processos
+    createExample1(&scheduler, 5);
 
     while(hasAvailableProcess(&scheduler))
     {
