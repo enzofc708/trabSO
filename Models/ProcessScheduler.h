@@ -36,6 +36,17 @@ int isEmpty(ProcessScheduler* scheduler){
     return !scheduler->processList->count;
 }
 
+int hasAvailableProcess(ProcessScheduler* scheduler){
+    for (int i = 0; i < scheduler->processList->count; i++)
+    {
+        if(scheduler->processList->processList[i]->State != ExitState){
+            return TRUE;
+        }
+    }
+    return FALSE;
+    
+}
+
 ProcessList* getNewProcesses(ProcessScheduler* p){
     ProcessList* newProcesses = createList();
     for (int i = 0; i < p->processList->count; i++)
@@ -44,7 +55,6 @@ ProcessList* getNewProcesses(ProcessScheduler* p){
            p->processList->processList[i]->StartTime <= p->currentIime &&
            p->processList->count < MAX_PROCESSES){
                p->processList->processList[i]->State = ReadyState;
-               p->processList->processList[i]->Priority = HighPriority;
             add(newProcesses, p->processList->processList[i]);
         }
     }
@@ -77,56 +87,20 @@ void spendIOTime(ProcessScheduler* scheduler, enum IOs IOType, int time){
 
     if(!isEmptyList(IOqueue)){
 
-        chosenProcess = popHead(IOqueue);
+        chosenProcess = IOqueue->processList[0];
 
         if(chosenProcess->IOElapsedTime + time >= ioTime){
             chosenProcess->IOElapsedTime = ioTime;
             chosenProcess->State = ReadyState;
+            popHead(IOqueue);
             add(priorityQueue, chosenProcess);
-            printf("Process left IO: PID = {%d}", chosenProcess->PID);
+            printf("Process left IO: PID = {%d}, Time = {%d}\n", chosenProcess->PID, scheduler->currentIime);
         }
         else{
             chosenProcess->IOElapsedTime += time;
-            add(IOqueue, chosenProcess);
         }
     }
 }
-
-// int checkSmallestTimeNewProcess(ProcessScheduler* p){
-//     int forwardTime = -1;
-
-//     for (int i = 0; i < p->processList->count; i++)
-//     {
-//         if(p->processList->processList[i]->State == NewState)
-//         {
-//             if (forwardTime == -1)
-//             {
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//             else if(p->processList->processList[i]->StartTime - p->currentIime > forwardTime){
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//         }
-//     }
-// }
-
-// int checkSmallestTimeIO(ProcessScheduler* p){
-//     int forwardTime = -1;
-
-//     for (int i = 0; i < p->processList->count; i++)
-//     {
-//         if(p->processList->processList[i]->State == BlockedState)
-//         {
-//             if (forwardTime == -1)
-//             {
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//             else if(p->processList->processList[i]->StartTime - p->currentIime > forwardTime){
-//                 forwardTime = p->processList->processList[i]->StartTime - p->currentIime;
-//             }
-//         }
-//     }
-// }
 
 void schedule(ProcessScheduler* p){
 
@@ -154,7 +128,7 @@ void schedule(ProcessScheduler* p){
         return;
     }
 
-    printf("Process entered CPU: PID = {%d}", chosenProcess->PID);
+    printf("Process entered CPU: PID = {%d}, Time={%d}\n", chosenProcess->PID, p->currentIime);
 
     //Forward time
     int execTime = getExecTime(chosenProcess);
@@ -181,21 +155,15 @@ void schedule(ProcessScheduler* p){
                 add(p->magTapeQueue, chosenProcess);
                 break;
         }
-        printf("Process entered IO: PID = {%d}", chosenProcess->PID);
+        printf("Process entered IO: PID = {%d}, Time = {%d}\n", chosenProcess->PID, p->currentIime);
     }
     else if(chosenProcess->RemainingTime == 0){
         chosenProcess->State = ExitState;
-        printf("Process finished: PID = {%d}, Time = {%d}", chosenProcess->PID, p->currentIime);
+        printf("Process finished: PID = {%d}, Time = {%d}\n", chosenProcess->PID, p->currentIime);
     }
     else{
         chosenProcess->State = ReadyState;
-        chosenProcess->Priority = LowPriority;
         add(p->lowPriorityQueue, chosenProcess);
-        printf("Process preempted: PID = {%d}, Remaining Time = {%d}", chosenProcess->PID, chosenProcess->RemainingTime);
+        printf("Process preempted: PID = {%d}, Time = {%d}\n", chosenProcess->PID, p->currentIime);
     }
-
-
-
-    
-
 }

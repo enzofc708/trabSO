@@ -11,8 +11,7 @@
 #include "Models/ProcessList.h"
 #include "Utils/SchedulerUtils.h"
 #include "Models/ProcessScheduler.h"
-#include "Examples/Examples.h"
-
+#include "Utils/ProcessUtils.h"
 
 //Process Scheduler 
 int main(int argc, char const *argv[])
@@ -23,9 +22,28 @@ int main(int argc, char const *argv[])
     //Scheduler
     ProcessScheduler scheduler = createScheduler();
 
-    createExample1(&scheduler);
+    //Get arguments from console
+    if(argc < 2){
+        printf("Usage: %s <number_of_processes>\n", argv[0]);
+        return 1;
+    }
 
-    while(!isEmpty(&scheduler))
+    int num_processes = atoi(argv[1]);
+
+    if(num_processes > 20){
+        printf("Number of processes should not be greater than 20.\n");
+        return 1;
+    }
+    else if (num_processes < 0)
+    {
+        printf("Number of processes should not be less than 0.\n");
+        return 1;
+    }
+    
+
+    createProcesses(&scheduler, atoi(argv[1]));
+
+    while(hasAvailableProcess(&scheduler))
     {
         schedule(&scheduler);
     }    

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "cmath": "c",
-        "cstdio": "c"
+        "cstdio": "c",
+        "macros.h": "c"
     }
 }
