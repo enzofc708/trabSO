@@ -94,7 +94,7 @@ void spendIOTime(ProcessScheduler* scheduler, enum IOs IOType, int time){
             chosenProcess->IOElapsedTime = ioTime;
             chosenProcess->State = ReadyState;
             add(priorityQueue, chosenProcess);
-            printf("Process left IO: PID = {%d}", chosenProcess->PID);
+            printf("Process left IO: PID = {%d}\n", chosenProcess->PID);
         }
         else{
             chosenProcess->IOElapsedTime += time;
@@ -129,7 +129,7 @@ void schedule(ProcessScheduler* p){
         return;
     }
 
-    printf("Process entered CPU: PID = {%d}", chosenProcess->PID);
+    printf("Process entered CPU: PID = {%d}\n", chosenProcess->PID);
 
     //Forward time
     int execTime = getExecTime(chosenProcess);
@@ -156,17 +156,17 @@ void schedule(ProcessScheduler* p){
                 add(p->magTapeQueue, chosenProcess);
                 break;
         }
-        printf("Process entered IO: PID = {%d}", chosenProcess->PID);
+        printf("Process entered IO: PID = {%d}\n", chosenProcess->PID);
     }
     else if(chosenProcess->RemainingTime == 0){
         chosenProcess->State = ExitState;
-        printf("Process finished: PID = {%d}, Time = {%d}", chosenProcess->PID, p->currentIime);
+        printf("Process finished: PID = {%d}, Time = {%d}\n", chosenProcess->PID, p->currentIime);
     }
     else{
         chosenProcess->State = ReadyState;
         chosenProcess->Priority = LowPriority;
         add(p->lowPriorityQueue, chosenProcess);
-        printf("Process preempted: PID = {%d}, Remaining Time = {%d}", chosenProcess->PID, chosenProcess->RemainingTime);
+        printf("Process preempted: PID = {%d}, Remaining Time = {%d}\n", chosenProcess->PID, chosenProcess->RemainingTime);
     }
 
 
